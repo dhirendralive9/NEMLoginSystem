@@ -365,6 +365,7 @@ router.post('/reset-password/:token', async (req, res) => {
     const { token } = req.params;
     const { password, confirmPassword } = req.body;
 
+    // ✅ Check if passwords match
     if (password !== confirmPassword) {
       return res.render('auth/resetPassword', {
         title: 'Reset Password',
@@ -373,18 +374,22 @@ router.post('/reset-password/:token', async (req, res) => {
       });
     }
 
-    const user = await User.findOne({ resetToken: token, resetTokenExpires: { $gt: Date.now() } });
+    // ✅ Find user by valid reset token
+    const user = await User.findOne({
+      resetToken: token,
+      resetTokenExpires: { $gt: Date.now() }
+    });
 
     if (!user) {
       return res.redirect('/auth/login?reset=invalid');
     }
 
-    // Hash and save new password
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(password, salt);
+    // ✅ Assign plain password (hashing is handled in User.js)
+    user.password = password;
     user.resetToken = undefined;
     user.resetTokenExpires = undefined;
-    await user.save();
+    
+    await user.save(); // `pre('save')` middleware will hash the password automatically
 
     return res.redirect('/auth/login?reset=success');
   } catch (error) {
