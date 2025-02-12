@@ -26,6 +26,6 @@ This project is a **demonstration of a secure authentication system** built usin
 
 ### 1️⃣ Clone the Repository  
 ```sh
-git clone https://github.com/yourusername/repo-name.git
+git clone [https://github.com/yourusername/repo-name.git](https://github.com/dhirendralive9/NEMLoginSystem.git)
 cd repo-name
 
