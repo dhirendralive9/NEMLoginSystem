@@ -25,7 +25,57 @@ This project is a **demonstration of a secure authentication system** built usin
 ## Installation & Setup 🔧  
 
 ### 1️⃣ Clone the Repository  
-```sh
+```
 git clone https://github.com/dhirendralive9/NEMLoginSystem.git
 cd NEMLoginSystem
+```
+### 2️⃣ Install Dependencies
+```sh
+npm install
+```
+### 3️⃣ Create A .env file 
+```
+PORT=3000
+MONGO_URI=your_mongodb_connection_string
+JWT_SECRET=your_jwt_secret
+BREVO_API_KEY=your_brevo_api_key
+BASE_URL=http://localhost:3000
+RECAPTCHA_SECRET_KEY=your_google_recaptcha_secret
+```
+### 4️⃣ Setup an Mongodb and connect it.
+```
+Make sure you have MongoDB installed and running locally or provide a MongoDB Atlas connection string in the .env file.
+```
+
+### 5️⃣  Start the Server
+```
+npm start
+```
+
+## API Endpoints ⚡
+
+
+## Usage 🎯
+
+### 1️⃣ Register & Verify Email
+
+Sign up via /auth/register.
+Check your email and click the verification link.
+
+### 2️⃣ Login & Authentication
+
+Use `/auth/login` with your email & password to receive a JWT token.
+Store the JWT and send it in the Authorization header for protected routes.
+
+### 3️⃣ Forgot Password Flow
+
+Visit `/auth/forgot-password`, enter your email, and check your inbox for the reset link.
+Click the link and update your password via /reset-password/:token.
+
+## Security Measures 🔒
+JWT-Based Authentication: No session storage.
+bcrypt Hashing: Passwords are securely stored.
+Google reCAPTCHA: Protects registration & login from bots.
+Helmet & Rate Limiting: Prevents common security threats.
+Environment Variables: Sensitive credentials are not hardcoded.
 
