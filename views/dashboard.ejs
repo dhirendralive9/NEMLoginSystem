@@ -1,0 +1,14 @@
+<%- include('partials/navbar') %>
+
+<div class="container mt-5">
+  <h2>Welcome, <%= user.name %>!</h2>
+  <p>This is your dashboard.</p>
+
+  <button class="btn btn-danger" onclick="logout()">Logout</button>
+</div>
+
+<script>
+  function logout() {
+    window.location.href = "/auth/logout";
+  }
+</script>

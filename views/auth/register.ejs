@@ -1,0 +1,130 @@
+<%- include('../partials/navbar') %>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <% if (errorMessage) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+          <%= errorMessage %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+      <% if (successMessage) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <%= successMessage %>
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <% } %>
+      <div class="card shadow-sm">
+        <div class="card-body">
+          <h2 class="text-center text-primary">Create an Account</h2>
+          <form id="registerForm" action="/auth/register" method="POST">
+            <div class="mb-3">
+              <label class="form-label">Full Name</label>
+              <input type="text" name="name" id="name" class="form-control" required value="<%= typeof name !== 'undefined' ? name : '' %>">
+              <p id="nameError" class="text-danger d-none">Full name is required.</p>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Email Address</label>
+              <input type="email" name="email" id="email" class="form-control" required value="<%= typeof email !== 'undefined' ? email : '' %>">
+              <p id="emailError" class="text-danger d-none">Please enter a valid email address.</p>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Password</label>
+              <div class="input-group">
+                <input type="password" name="password" id="password" class="form-control" required>
+                <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('password')">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Confirm Password</label>
+              <div class="input-group">
+                <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" required>
+                <button type="button" class="btn btn-outline-secondary" onclick="togglePassword('confirmPassword')">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+            </div>
+            <p id="passwordError" class="text-danger d-none">Passwords do not match!</p>
+
+            <!-- Google reCAPTCHA -->
+            <div class="g-recaptcha" data-sitekey="<%= process.env.RECAPTCHA_SITE_KEY %>"></div>
+            <p id="captchaError" class="text-danger d-none">Please verify that you are not a robot!</p>
+
+            <button type="submit" class="btn btn-primary w-100">Register</button>
+          </form>
+          <p class="mt-3 text-center">Already have an account? <a href="/auth/login">Login here</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById("registerForm").addEventListener("submit", function(event) {
+    let valid = true;
+
+    // Validate full name
+    const name = document.getElementById("name").value.trim();
+    const nameError = document.getElementById("nameError");
+    if (name === "") {
+      nameError.classList.remove("d-none");
+      valid = false;
+    } else {
+      nameError.classList.add("d-none");
+    }
+
+    // Validate email
+    const email = document.getElementById("email").value.trim();
+    const emailError = document.getElementById("emailError");
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(email)) {
+      emailError.classList.remove("d-none");
+      valid = false;
+    } else {
+      emailError.classList.add("d-none");
+    }
+
+    // Validate passwords match
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
+    const passwordError = document.getElementById("passwordError");
+
+    if (password !== confirmPassword) {
+      passwordError.classList.remove("d-none");
+      valid = false;
+    } else {
+      passwordError.classList.add("d-none");
+    }
+
+    // Validate reCAPTCHA
+    if (!grecaptcha.getResponse()) {
+      document.getElementById("captchaError").classList.remove("d-none");
+      valid = false;
+    } else {
+      document.getElementById("captchaError").classList.add("d-none");
+    }
+
+    if (!valid) {
+      event.preventDefault(); // Prevent form submission if any validation fails
+    }
+  });
+
+  function togglePassword(id) {
+    const input = document.getElementById(id);
+    const icon = input.nextElementSibling.querySelector("i");
+
+    if (input.type === "password") {
+      input.type = "text";
+      icon.classList.remove("bi-eye");
+      icon.classList.add("bi-eye-slash");
+    } else {
+      input.type = "password";
+      icon.classList.remove("bi-eye-slash");
+      icon.classList.add("bi-eye");
+    }
+  }
+</script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
